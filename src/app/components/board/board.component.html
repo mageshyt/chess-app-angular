@@ -1,0 +1,12 @@
+<div class="board">
+  <div *ngFor="let row of chess.chessboard; let i = index" class="board-row">
+    <div *ngFor="let square of row; let j = index">
+      <!-- Render the pieces for each square -->
+      <app-square
+        [piece]="square"
+        [color]="isWhiteSquare(i, j) ? 'w' : 'b'"
+        pieceId="square-{{ i }}-{{ j }}"
+      ></app-square>
+    </div>
+  </div>
+</div>

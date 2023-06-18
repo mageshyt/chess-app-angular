@@ -1,0 +1,8 @@
+<div
+  [ngClass]="{
+    'white-square': color === 'w',
+    'black-square': color === 'b'
+  }"
+>
+  <app-pieces [pieceId]="pieceId" [piece]="piece"></app-pieces>
+</div>

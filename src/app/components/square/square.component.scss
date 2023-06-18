@@ -1,0 +1,7 @@
+.white-square {
+  @apply bg-primary flex items-center justify-center  2xl:w-24 2xl:h-24 w-[72px] h-[72px];
+}
+
+.black-square {
+  @apply bg-secondary w-[72px]    2xl:w-24 2xl:h-24   flex items-center justify-center   h-[72px];
+}
