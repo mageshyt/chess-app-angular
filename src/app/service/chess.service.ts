@@ -61,21 +61,17 @@ export class ChessService {
     col: number,
     piece: string,
     oldRow: number,
-    oldCol: number
+    oldCol: number,
+    turn: string
   ) {
     // check if piece is valid
     if (!piece) {
       return;
     }
-    console.log(this.chessboard[row][col]);
     if (this.chessboard[row][col] !== ' ') return;
 
     this.chessboard[row][col] = piece;
     this.chessboard[oldRow][oldCol] = ' ';
-
-    // old row and old col
-    console.log(`Moved ${piece} to ${oldRow},${oldCol}`);
-    console.log(`Moved ${piece} to ${row},${col}`);
 
     console.table(this.chessboard);
   }

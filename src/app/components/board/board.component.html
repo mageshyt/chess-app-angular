@@ -5,7 +5,7 @@
       <app-square
         [piece]="square"
         [color]="isWhiteSquare(i, j) ? 'w' : 'b'"
-        pieceId="square-{{ i }}-{{ j }}"
+        pieceId="{{ isWhiteSquare(i, j) ? 'w' : 'b' }}-{{ i }}-{{ j }}"
       ></app-square>
     </div>
   </div>
