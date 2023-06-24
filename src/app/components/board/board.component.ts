@@ -23,9 +23,15 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setChessboardRef();
+  }
+
+  private setChessboardRef() {
     // Get the chessboard element
-    const element = document.querySelectorAll('.board');
-    // Set the chessboard element
-    this.chess.setChessboardRef(element[0]);
+    const element = document.querySelector('.board');
+    if (element) {
+      // Set the chessboard element
+      this.chess.setChessboardRef(element);
+    }
   }
 }

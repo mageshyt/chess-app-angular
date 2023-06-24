@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ChessService } from 'src/app/service/chess.service';
 
 type pieceType = 'r' | 'n' | 'b' | 'q' | 'k' | 'p' | ' ';
 type pieceColor = 'w' | 'b';
@@ -12,9 +13,7 @@ export class SquareComponent implements OnInit {
   @Input() pieceId: string = '';
   @Input() color!: pieceColor;
 
-  constructor() {}
+  constructor(public chess: ChessService) {}
 
   ngOnInit(): void {}
-
-  
 }

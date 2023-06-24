@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,12 @@ export class ChessService {
 
   // activePiece
 
-  private activePiece!: any;
+  // activePiece as Observable
+
+  private activePieceSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
+  public activePiece$: Observable<any> = this.activePieceSubject.asObservable();
 
   constructor() {}
   getPieceImage(piece: string): string {
@@ -52,22 +57,35 @@ export class ChessService {
   }
   // Function to move a piece on the chessboard
   movePiece(
-    startRow: number,
-    startCol: number,
-    endRow: number,
-    endCol: number
+    row: number,
+    col: number,
+    piece: string,
+    oldRow: number,
+    oldCol: number
   ) {
-    const piece = this.chessboard[startRow][startCol];
-    this.chessboard[endRow][endCol] = piece;
-    this.chessboard[startRow][startCol] = ' ';
+    // check if piece is valid
+    if (!piece) {
+      return;
+    }
+    console.log(this.chessboard[row][col]);
+    if (this.chessboard[row][col] !== ' ') return;
+
+    this.chessboard[row][col] = piece;
+    this.chessboard[oldRow][oldCol] = ' ';
+
+    // old row and old col
+    console.log(`Moved ${piece} to ${oldRow},${oldCol}`);
+    console.log(`Moved ${piece} to ${row},${col}`);
+
+    console.table(this.chessboard);
   }
 
   setActivePiece(piece: any) {
-    this.activePiece = piece;
+    this.activePieceSubject.next(piece);
   }
 
-  getActivePiece() {
-    return this.activePiece;
+  getActivePiece(): Observable<any> {
+    return this.activePiece$;
   }
 
   // set chessboard ref

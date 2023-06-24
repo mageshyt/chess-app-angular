@@ -1,8 +1,12 @@
 <div
+  class="select-none    {{ pieceId }}"
   [ngClass]="{
     'white-square': color === 'w',
     'black-square': color === 'b'
   }"
 >
+  <div *ngIf="piece == ' '">
+    {{ pieceId }}
+  </div>
   <app-pieces [pieceId]="pieceId" [piece]="piece"></app-pieces>
 </div>

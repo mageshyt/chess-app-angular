@@ -9,61 +9,93 @@ import { ChessService } from 'src/app/service/chess.service';
 export class PiecesComponent implements OnInit {
   @Input() piece!: string;
   @Input() pieceId: string = '';
-  isGrabbing: any;
+  isGrabbing: boolean = false;
+  activePiece: any;
+
+  pieceSrc = '';
+
   constructor(public chess: ChessService) {}
-  piece_src = '';
+
   ngOnInit(): void {
     if (!this.piece) {
       return;
     }
-    this.piece_src = this.chess.getPieceImage(this.piece);
+    this.pieceSrc = this.chess.getPieceImage(this.piece);
+
+    this.chess.getActivePiece().subscribe((piece) => {
+      this.activePiece = piece;
+    });
   }
 
-  grabPiece(e: any) {
-    console.log('grab piece', e.target);
-    // set active piece
+  grabPiece(e: MouseEvent) {
     this.isGrabbing = true;
     const piece = document.getElementById(this.pieceId);
     if (!piece) {
       return;
     }
 
-    const x = e.clientX - 50;
-    const y = e.clientY - 50;
-
-    piece.style.position = 'absolute';
-    piece.style.left = x + 'px';
-    piece.style.top = y + 'px';
-
     this.chess.setActivePiece(piece);
+    const chessboardRef = this.chess.chessboardRef;
+
+    if (chessboardRef) {
+      const x = e.clientX - 50;
+      const y = e.clientY - 50;
+
+      piece.style.position = 'absolute';
+      piece.style.left = `${x}px`;
+      piece.style.top = `${y}px`;
+    }
   }
 
-  movePiece(e: any) {
-    const active_piece = this.chess.getActivePiece();
-    const chess_board = this.chess.chessboardRef;
+  movePiece(e: MouseEvent) {
+    const chessboardRef = this.chess.chessboardRef;
 
-    if (active_piece && chess_board && this.isGrabbing === true) {
-      const minX = chess_board.offsetLeft;
-      const minY = chess_board.offsetTop;
+    if (this.activePiece && chessboardRef && this.isGrabbing) {
+      const minX = chessboardRef.offsetLeft - 25;
+      const minY = chessboardRef.offsetTop - 25;
+
+      const maxX = chessboardRef.offsetLeft + chessboardRef.offsetWidth - 75;
+      const maxY = chessboardRef.offsetTop + chessboardRef.offsetHeight - 75;
 
       const x = e.clientX - 50;
       const y = e.clientY - 50;
 
-      active_piece.style.left = x < minX ? minX + 'px' : x + 'px';
+      this.activePiece.style.position = 'absolute';
+      if (x < minX || x > maxX || y < minY || y > maxY) {
+        return;
+      }
 
-      active_piece.style.top = y < minY ? minY + 'px' : y + 'px';
+      this.activePiece.style.left = `${x}px`;
+      this.activePiece.style.top = `${y}px`;
     }
   }
 
   dropPiece(e: any) {
-    const piece = document.getElementById(e.target);
-    console.log('drop piece', e.target);
-    if (piece) {
-      piece.style.position = 'static';
+    console.log(e);
+    if (!this.activePiece) {
+      return;
     }
+    const chessboardRef = this.chess.chessboardRef;
+    const piece = this.activePiece.id.split('-');
 
-    this.chess.setActivePiece(null);
+    console.log(this.activePiece);
+    // console.log(pieceId);
+    const row = Math.floor(
+      (this.activePiece.offsetTop - chessboardRef.offsetTop) / 100
+    );
+    const col = Math.floor(
+      (this.activePiece.offsetLeft - chessboardRef.offsetLeft) / 100
+    );
+
+    console.log(row, col);
+
+    this.chess.movePiece(row, col, this.piece, +piece[1], +piece[2]);
+
+    this.activePiece.style.position = 'unset';
+    this.activePiece.style.left = 'unset';
+    this.activePiece.style.top = 'unset';
 
     this.isGrabbing = false;
+    this.chess.setActivePiece(null);
   }
 }

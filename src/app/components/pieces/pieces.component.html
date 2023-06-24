@@ -1,12 +1,16 @@
-<img
-  *ngIf="piece !== ' '"
-  [src]="piece_src"
-  [alt]="piece"
-  class="piece cursor-grab"
-  draggable="true"
-  [id]="pieceId"
+<div
   (mousedown)="grabPiece($event)"
   (mousemove)="movePiece($event)"
   (mouseup)="dropPiece($event)"
-  [ngClass]="{ grabbing: isGrabbing }"
-/>
+  [id]="pieceId + '-' + piece"
+  class="cursor-pointer"
+>
+  <img
+    [src]="pieceSrc"
+    [alt]="piece"
+    [id]="pieceId"
+    class="piece cursor-grab"
+    [ngClass]="{ hidden: piece == ' ' }"
+    draggable="true"
+  />
+</div>
