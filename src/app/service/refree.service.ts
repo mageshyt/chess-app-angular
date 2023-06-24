@@ -31,7 +31,7 @@ export class RefreeService {
       case PiecesType.Knight:
         return this.isValidKnightMove(newRow, newCol, row, col);
       case PiecesType.Bishop:
-        return this.isValidBishopMove(newRow, newCol, row, col);
+        return this.isValidBishopMove(newRow, newCol, row, col, color);
       case PiecesType.Queen:
         return this.isValidQueenMove(newRow, newCol, row, col);
       case PiecesType.King:
@@ -55,16 +55,27 @@ export class RefreeService {
     row: number,
     col: number
   ): boolean {
-    this.notyf.error('Knight move not implemented');
+    console.log('isValidKnightMove', newRow, newCol, row, col);
+    const rowDiff = Math.abs(newRow - row);
+    const colDiff = Math.abs(newCol - col);
+
+    // Check if the knight is moving in an L shape
+    if ((rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2)) {
+      return true;
+    }
+
     return false;
   }
+
   isValidBishopMove(
     newRow: number,
     newCol: number,
     row: number,
-    col: number
+    col: number,
+    color: string
   ): boolean {
     this.notyf.error('Bishop move not implemented');
+
     return false;
   }
   isValidQueenMove(
@@ -92,7 +103,6 @@ export class RefreeService {
     col: number,
     color: string
   ): boolean {
-    console.log('color ', color);
     // Determine the direction of movement based on the pawn's color
     const rowOffset = color === 'w' ? -1 : 1;
 

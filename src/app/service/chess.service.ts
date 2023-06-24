@@ -56,6 +56,7 @@ export class ChessService {
       this.notyf.error('Invalid move - Outside the board');
       return;
     }
+
     const res = this.refree.isValidMove(
       row,
       col,
@@ -66,7 +67,7 @@ export class ChessService {
     );
 
     if (!res) {
-      this.notyf.error('Invalid move - Refree');
+      // this.notyf.error('Invalid move - Refree');
       return;
     }
     this.chessboard[row][col] = piece;
@@ -177,6 +178,18 @@ export class ChessService {
 
         break;
 
+      case 'N': // White Knight
+      case 'n': // Black Knight
+        this.addKnightMove(row - 2, col - 1, possibleMoves);
+        this.addKnightMove(row - 2, col + 1, possibleMoves);
+        this.addKnightMove(row - 1, col - 2, possibleMoves);
+        this.addKnightMove(row - 1, col + 2, possibleMoves);
+        this.addKnightMove(row + 1, col - 2, possibleMoves);
+        this.addKnightMove(row + 1, col + 2, possibleMoves);
+        this.addKnightMove(row + 2, col - 1, possibleMoves);
+        this.addKnightMove(row + 2, col + 1, possibleMoves);
+        break;
+
       default:
         break;
     }
@@ -184,6 +197,14 @@ export class ChessService {
     this.updateChessboardWithPossibleMoves(possibleMoves);
 
     return possibleMoves;
+  }
+  addKnightMove(row: number, col: number, possibleMoves: any[]): void {
+    if (this.isValidSquare(row, col)) {
+      const piece = this.chessboard[row][col];
+      if (piece === ' ' || this.isOpponentPiece(row, col)) {
+        possibleMoves.push({ row, col });
+      }
+    }
   }
 
   private updateChessboardWithPossibleMoves(possibleMoves: any[]): void {

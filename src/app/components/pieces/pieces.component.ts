@@ -11,7 +11,7 @@ export class PiecesComponent implements OnInit {
   @Input() pieceId: string = '';
 
   isDragging: boolean = false;
-  activePiece: any;
+  activePiece: HTMLElement | null = null;
   @Input() pieceSrc!: string;
 
   constructor(public chess: ChessService) {}
@@ -27,12 +27,9 @@ export class PiecesComponent implements OnInit {
   }
 
   grabPiece(e: MouseEvent) {
-    console.log('grap');
     if (this.isDragging) {
-      // Perform drop logic
       this.dropPiece(e);
     } else {
-      // Perform grab logic
       this.isDragging = true;
       const piece = document.getElementById(this.pieceId);
       if (!piece) {
@@ -42,11 +39,9 @@ export class PiecesComponent implements OnInit {
       this.chess.setActivePiece(piece);
       const chessboardRef = this.chess.chessboardRef;
 
-      // Set possible moves
       const pieceIdParts = this.pieceId.split('-');
       const row = Number(pieceIdParts[1]);
       const col = Number(pieceIdParts[2]);
-      // TODO: Fix this
       this.chess.setPossibleMoves(row, col, this.piece);
 
       if (chessboardRef) {
@@ -61,22 +56,21 @@ export class PiecesComponent implements OnInit {
   }
 
   movePiece(e: MouseEvent) {
-    if (!this.isDragging) {
+    if (!this.isDragging || !this.activePiece) {
       return;
     }
 
     const chessboard = this.chess.chessboardRef;
 
-    const minX = chessboard.offsetLeft - 25;
-    const minY = chessboard.offsetTop - 25;
-    const maxX = chessboard.offsetLeft + chessboard.clientWidth - 75;
-    const maxY = chessboard.offsetTop + chessboard.clientHeight - 75;
+    const minX = chessboard?.offsetLeft ?? 0 - 25;
+    const minY = chessboard?.offsetTop ?? 0 - 25;
+    const maxX =
+      (chessboard?.offsetLeft ?? 0) + (chessboard?.clientWidth ?? 0) - 75;
+    const maxY =
+      (chessboard?.offsetTop ?? 0) + (chessboard?.clientHeight ?? 0) - 75;
     const x = e.clientX - 50;
     const y = e.clientY - 50;
 
-    if (!this.activePiece) {
-      return;
-    }
     if (x < minX || x > maxX || y < minY || y > maxY) {
       return;
     }
@@ -104,7 +98,7 @@ export class PiecesComponent implements OnInit {
     const oldY = Number(piece[2]);
 
     this.chess.movePiece(row, col, this.piece, oldX, oldY, pieceType);
-    console.log('dropping');
+
     this.activePiece.style.position = 'unset';
     this.activePiece.style.left = 'unset';
     this.activePiece.style.top = 'unset';
