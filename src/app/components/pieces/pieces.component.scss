@@ -1,3 +1,10 @@
 .piece {
-  @apply cursor-grab  active:cursor-grabbing;
+  @apply cursor-grab   active:cursor-grabbing  h-[80px] w-[80px]   bg-no-repeat;
+}
+
+.move {
+  @apply h-4 w-4 rounded-full bg-gray-500;
+}
+.attack {
+  @apply rounded-full border-4 border-gray-400;
 }

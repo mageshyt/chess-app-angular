@@ -13,7 +13,11 @@ export class SquareComponent implements OnInit {
   @Input() pieceId: string = '';
   @Input() color!: pieceColor;
 
+  pieceSrc = '';
   constructor(public chess: ChessService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log();
+    this.pieceSrc = this.chess.getPieceImage(this.piece.split(' ')[0]);
+  }
 }

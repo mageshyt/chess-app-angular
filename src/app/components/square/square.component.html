@@ -5,8 +5,9 @@
     'black-square': color === 'b'
   }"
 >
-  <div *ngIf="piece == ' '">
-    {{ pieceId }}
-  </div>
-  <app-pieces [pieceId]="pieceId" [piece]="piece"></app-pieces>
+  <app-pieces
+    [pieceId]="pieceId"
+    [piece]="piece"
+    [pieceSrc]="pieceSrc"
+  ></app-pieces>
 </div>

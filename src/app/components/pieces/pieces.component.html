@@ -3,14 +3,16 @@
   (mousemove)="movePiece($event)"
   (mouseup)="dropPiece($event)"
   [id]="pieceId + '-' + piece"
-  class="cursor-pointer"
+  class="cursor-pointer select-none"
 >
-  <img
-    [src]="pieceSrc"
-    [alt]="piece"
+  <!-- possible -->
+  <div *ngIf="piece == 'X'" [ngClass]="piece === 'X' ? 'move' : 'move'"></div>
+
+  <div
+    *ngIf="piece !== ' ' && piece !== 'X'"
+    [style.backgroundImage]="'url(' + pieceSrc + ')'"
+    class="piece"
     [id]="pieceId"
-    class="piece cursor-grab"
-    [ngClass]="{ hidden: piece == ' ' }"
-    draggable="true"
-  />
+    [ngClass]="piece.includes('A') ? ' attack' : ''"
+  ></div>
 </div>

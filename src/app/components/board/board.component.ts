@@ -8,6 +8,7 @@ import { ChessService } from 'src/app/service/chess.service';
 })
 export class BoardComponent implements OnInit {
   constructor(public chess: ChessService) {}
+isDragging: boolean = false;
 
   // isWhiteSquare
 

@@ -9,10 +9,10 @@ import { ChessService } from 'src/app/service/chess.service';
 export class PiecesComponent implements OnInit {
   @Input() piece!: string;
   @Input() pieceId: string = '';
-  isGrabbing: boolean = false;
-  activePiece: any;
 
-  pieceSrc = '';
+  isDragging: boolean = false;
+  activePiece: any;
+  @Input() pieceSrc!: string;
 
   constructor(public chess: ChessService) {}
 
@@ -20,7 +20,6 @@ export class PiecesComponent implements OnInit {
     if (!this.piece) {
       return;
     }
-    this.pieceSrc = this.chess.getPieceImage(this.piece);
 
     this.chess.getActivePiece().subscribe((piece) => {
       this.activePiece = piece;
@@ -28,26 +27,44 @@ export class PiecesComponent implements OnInit {
   }
 
   grabPiece(e: MouseEvent) {
-    this.isGrabbing = true;
-    const piece = document.getElementById(this.pieceId);
-    if (!piece) {
-      return;
-    }
+    console.log('grap');
+    if (this.isDragging) {
+      // Perform drop logic
+      this.dropPiece(e);
+    } else {
+      // Perform grab logic
+      this.isDragging = true;
+      const piece = document.getElementById(this.pieceId);
+      if (!piece) {
+        return;
+      }
 
-    this.chess.setActivePiece(piece);
-    const chessboardRef = this.chess.chessboardRef;
+      this.chess.setActivePiece(piece);
+      const chessboardRef = this.chess.chessboardRef;
 
-    if (chessboardRef) {
-      const x = e.clientX - 50;
-      const y = e.clientY - 50;
+      // Set possible moves
+      const pieceIdParts = this.pieceId.split('-');
+      const row = Number(pieceIdParts[1]);
+      const col = Number(pieceIdParts[2]);
+      // TODO: Fix this
+      this.chess.setPossibleMoves(row, col, this.piece);
 
-      piece.style.position = 'absolute';
-      piece.style.left = `${x}px`;
-      piece.style.top = `${y}px`;
+      if (chessboardRef) {
+        const x = e.clientX - 50;
+        const y = e.clientY - 50;
+
+        piece.style.position = 'absolute';
+        piece.style.left = `${x}px`;
+        piece.style.top = `${y}px`;
+      }
     }
   }
 
   movePiece(e: MouseEvent) {
+    if (!this.isDragging) {
+      return;
+    }
+
     const chessboard = this.chess.chessboardRef;
 
     const minX = chessboard.offsetLeft - 25;
@@ -60,33 +77,12 @@ export class PiecesComponent implements OnInit {
     if (!this.activePiece) {
       return;
     }
+    if (x < minX || x > maxX || y < minY || y > maxY) {
+      return;
+    }
     this.activePiece.style.position = 'absolute';
-
-    //If x is smaller than minimum amount
-    if (x < minX) {
-      this.activePiece.style.left = `${minX}px`;
-    }
-    //If x is bigger than maximum amount
-    else if (x > maxX) {
-      this.activePiece.style.left = `${maxX}px`;
-    }
-    //If x is in the constraints
-    else {
-      this.activePiece.style.left = `${x}px`;
-    }
-
-    //If y is smaller than minimum amount
-    if (y < minY) {
-      this.activePiece.style.top = `${minY}px`;
-    }
-    //If y is bigger than maximum amount
-    else if (y > maxY) {
-      this.activePiece.style.top = `${maxY}px`;
-    }
-    //If y is in the constraints
-    else {
-      this.activePiece.style.top = `${y}px`;
-    }
+    this.activePiece.style.left = `${x}px`;
+    this.activePiece.style.top = `${y}px`;
   }
 
   dropPiece(e: MouseEvent) {
@@ -108,12 +104,14 @@ export class PiecesComponent implements OnInit {
     const oldY = Number(piece[2]);
 
     this.chess.movePiece(row, col, this.piece, oldX, oldY, pieceType);
-
+    console.log('dropping');
     this.activePiece.style.position = 'unset';
     this.activePiece.style.left = 'unset';
     this.activePiece.style.top = 'unset';
 
-    this.isGrabbing = false;
+    this.isDragging = false;
     this.chess.setActivePiece(null);
+
+    this.chess.clearPossibleMoves();
   }
 }
