@@ -13,6 +13,6 @@
     [style.backgroundImage]="'url(' + pieceSrc + ')'"
     class="piece"
     [id]="pieceId"
-    [ngClass]="piece.includes('A') ? ' attack' : ''"
+    [ngClass]="piece.includes('A') || piece.includes('D') ? ' attack' : ''"
   ></div>
 </div>

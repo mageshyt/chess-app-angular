@@ -40,6 +40,7 @@ export class PiecesComponent implements OnInit {
       const chessboardRef = this.chess.chessboardRef;
 
       const pieceIdParts = this.pieceId.split('-');
+      
       const row = Number(pieceIdParts[1]);
       const col = Number(pieceIdParts[2]);
       this.chess.setPossibleMoves(row, col, this.piece);

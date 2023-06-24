@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PiecesType } from '../lib/data';
 import { Notyf } from 'notyf';
+import { ChessService } from './chess.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +22,19 @@ export class RefreeService {
     row: number,
     col: number,
     type: PiecesType,
-    color: string
+    color: string,
+    chessboard: string[][]
   ): boolean {
     switch (type) {
       case PiecesType.Pawn:
-        return this.isValidPawnMove(newRow, newCol, row, col, color);
+        return this.isValidPawnMove(
+          newRow,
+          newCol,
+          row,
+          col,
+          color,
+          chessboard
+        );
       case PiecesType.Rook:
         return this.isValidRookMove(newRow, newCol, row, col);
       case PiecesType.Knight:
@@ -101,7 +110,8 @@ export class RefreeService {
     newCol: number,
     row: number,
     col: number,
-    color: string
+    color: string,
+    chessboard: string[][]
   ): boolean {
     // Determine the direction of movement based on the pawn's color
     const rowOffset = color === 'w' ? -1 : 1;
@@ -123,12 +133,30 @@ export class RefreeService {
     // Check if the pawn is capturing a piece diagonally
     if (
       newRow === row + rowOffset &&
-      (newCol === col - 1 || newCol === col + 1)
+      (newCol === col - 1 || newCol === col + 1) &&
+      this.isOpponentPiece(newRow, newCol, color, chessboard) // Check if the destination square has an opponent's piece
     ) {
       return true;
     }
 
     // If none of the above conditions are met, the move is not valid
     return false;
+  }
+
+  isOpponentPiece(
+    row: number,
+    col: number,
+    color: string,
+    chessboard: string[][]
+  ): boolean {
+    const piece = chessboard[row][col];
+
+    // Check if the square is empty or if it contains a piece of the same color
+    if (piece === ' ' || piece.toLowerCase() === color.toLowerCase()) {
+      return false;
+    }
+
+    // The square contains a piece of the opponent's color
+    return true;
   }
 }
